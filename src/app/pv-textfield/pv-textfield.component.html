@@ -1,0 +1,27 @@
+<div>
+    <label *ngIf="label">{{this.label}}</label>
+    <ul>
+        <li>
+            <input
+                type="text"
+                name="{{this.name}}"
+                [attr.maxlength]="maxlength"
+                placeholder="{{this.placeholder}}"
+                [(ngModel)]="object"
+                (ngModelChange)="valueChanged($event)"
+                [required]=this.required
+                [pattern]=this.pattern
+                [disabled]=false
+                onKeyDown="if(event.keyCode == 13) { return false;}"
+                #textn="ngModel"
+                />
+        </li>
+        <li>
+            <span *ngIf=maxlength>{{ object && object.length ? (maxlength - object.length) : maxlength }}/{{maxlength}}</span>
+        </li>
+        <li *ngIf="required">
+            <i class="material-icons set" *ngIf="object && !textn.errors">done</i>
+            <i class="material-icons unset" *ngIf="!object || textn.errors" title="Format must match {{validate}}">warning</i>
+        </li>
+    </ul>
+</div>

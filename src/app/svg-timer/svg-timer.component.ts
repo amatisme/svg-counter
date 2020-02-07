@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 
 @Component({
   selector: 'app-svg-timer',
@@ -8,9 +8,10 @@ import { Component, OnInit } from '@angular/core';
 export class SvgTimerComponent implements OnInit {
 
   private readonly _fullDashArray: number;
-  private readonly _warningThreshold: number;
-  private readonly _alertThreshold: number;
-  private readonly _timeLimit: number;
+
+  private _warningThreshold: number;
+  private _alertThreshold: number;
+  private _timeLimit: number;
 
   private colorCodes: any;
   private timePassed: number;
@@ -18,42 +19,93 @@ export class SvgTimerComponent implements OnInit {
   private timerInterval: number;
   private remainingPathColor: string;
   private baseTimerLabel: string;
+  private active: boolean = false;
+
+  @Input() settings: any;
+  @Input() alertColor: string = "orange";
+  @Input() warningColor: string = "red";
+  @Input() infoColor: string = "green";
+  @Input() time: string;
 
   constructor() {
-    this._timeLimit = 20;
-    this._alertThreshold = 5;
-    this._warningThreshold = 10;
     this._fullDashArray = 283;
   }
 
   ngOnInit() {
-    this.timePassed = 0;
-    this.timeLeft = this._timeLimit;
-    this.timerInterval = null;
+    // set the initial thresholds
+    if(!this.time) this._timeLimit = 20;
+    this.setThresholds();
+
+
+    // set the default color codes
     this.colorCodes = {
       info: {
         color: "green"
       },
       warning: {
         color: "orange",
-        threshold: this._warningThreshold
+        threshold: 10
       },
       alert: {
         color: "red",
-        threshold: this._alertThreshold
+        threshold: 5
       }
     };
-    this.remainingPathColor = this.colorCodes.info.color;
 
-    // update path color
-    // document
-    //   .getElementById("base-timer-path-remaining")
-    //   .style.color(this.colorCodes.info.color);
 
-    this.startTimer();
+    // set path element
+    this.elem = document.getElementById("remaining");
+    this.setTimer();
+  }
+
+  ngOnChanges(changes: any) {
+    //change settings from parent
+    if(changes.time) {
+      this._timeLimit = changes.time.currentValue;
+      this.baseTimerLabel = this.formatTime(changes.time.currentValue);
+      this.setThresholds();
+      this.resetTimer();
+    }
+    this.setRemainingPathColor();
+  }
+
+  setTimer() {
+    this.timePassed = 0;
+    this.timeLeft = this._timeLimit;
+    this.timerInterval = null;
+    this.active = false;
+
+    //update view
+    this.baseTimerLabel = this.formatTime(this.timeLeft);
+
+    //add initial color attribute
+    this.elem = document.getElementById("remaining");
+    this.elem.classList.add(this.infoColor);
+
+    // update appearance of timer
+    this.setCircleDasharray();
+  }
+
+  setThresholds() {
+    this._warningThreshold = this._timeLimit / 2;
+    this._alertThreshold = this._timeLimit / 4;
+  }
+
+  onTimesUp() {
+    clearInterval(this.timerInterval);
+  }
+
+  resetTimer() {
+    clearTimeout(this.timePassed);
+    this.setTimer();
   }
 
   startTimer() {
+    // reset if needed
+    this.active = true;
+
+    if(this.timeLeft === 0) this.resetTimer();
+
     this.timerInterval = setInterval(() => {
       //update time
       this.timeLeft = this._timeLimit - this.timePassed++;
@@ -65,44 +117,45 @@ export class SvgTimerComponent implements OnInit {
       this.setCircleDasharray();
       this.setRemainingPathColor();
 
-      if(this.timeLeft === 0) { this.onTimesUp(); }
+      if(this.timeLeft === 0) {
+        this.onTimesUp();
+      }
     }, 1000);
   }
 
-  onTimesUp() {
-    clearInterval(this.timerInterval);
+  stopTimer() {
+    clearTimeout(this.timerInterval);
+    this.timeLeft = this.timePassed;
+    this.active = false;
+
+    //add initial color attribute
+    this.elem.classList = [];
   }
 
   formatTime(time) {
     const minutes = Math.floor(time / 60);
     let seconds = time % 60;
+    let label: string;
 
     //append a zero
     let second: string;
     if(seconds < 10) {
-      second = minutes + ":" + "0" + seconds;
+      return "0" + minutes + ":" + "0" + seconds;
     } else {
-      second = minutes + ":" + seconds;
+      return "0" + minutes + ":" + seconds;
     }
-
-    return second;
   }
 
   setRemainingPathColor() {
-    if (this.timeLeft <= this.colorCodes.alert.threshold) {
-      document
-        .getElementById("base-timer-path-remaining")
-        .classList.remove(this.colorCodes.warning.color);
-      document
-        .getElementById("base-timer-path-remaining")
-        .classList.add(this.colorCodes.alert.color);
-    } else if (this.timeLeft <= this.colorCodes.warning.threshold) {
-      document
-        .getElementById("base-timer-path-remaining")
-        .classList.remove(this.colorCodes.info.color);
-      document
-        .getElementById("base-timer-path-remaining")
-        .classList.add(this.colorCodes.warning.color);
+    // start with clean set of style classes
+    this.elem.classList = [];
+    // add the appropriate class
+    if(this.timeLeft <= this._alertThreshold) {
+      if(this.alertColor) this.elem.style.color = this.alertColor;
+    } else if (this.timeLeft <= this._warningThreshold) {
+      if(this.warningColor) this.elem.style.color = this.warningColor;
+    } else {
+      if(this.infoColor) this.elem.style.color = this.infoColor;
     }
   }
 
@@ -112,11 +165,7 @@ export class SvgTimerComponent implements OnInit {
   }
 
   setCircleDasharray() {
-    let circleDasharray =  (this.calculateTimeFraction() * this._fullDashArray).toFixed(0);
-
-    //update DOM element
-    document
-      .getElementById("base-timer-path-remaining")
-      .setAttribute("stroke-dasharray", circleDasharray);
+    let circleDasharray: string = (this.calculateTimeFraction() * this._fullDashArray).toFixed(0) + " 283";
+    this.elem.setAttribute("stroke-dasharray", circleDasharray);
   }
 }

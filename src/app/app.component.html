@@ -1,3 +1,61 @@
-<h1>SVG Counter</h1>
-<app-svg-timer>
-</app-svg-timer>
+
+<header>
+  <ul>
+    <li></li>
+    <li><label>{{label}}</label></li>
+    <li>
+      <button (click)="unsetView()" *ngIf=view>
+        <i class="material-icons">close</i>
+      </button>
+      <button (click)="setView('settings')" *ngIf=!view>
+        <i class="material-icons">settings</i>
+      </button>
+    </li>
+  </ul>
+</header>
+
+<div class="view" id=panelTimer>
+  <app-svg-timer
+    [time]=settings.time
+    [infoColor]=settings.infoColor
+    [alertColor]=settings.alertColor
+    [warningColor]=settings.warningColor>
+  </app-svg-timer>
+</div>
+
+<div class="view" id=panelAbout *ngIf="checkView('about')">
+  <p>
+    Maecenas scelerisque ipsum eget sagittis volutpat. Pellentesque maximus tempus velit eget pulvinar. Vestibulum consequat posuere ligula quis varius. Cras suscipit tincidunt dui nec egestas. Morbi at aliquet nisl, non venenatis lacus. Phasellus auctor a tortor ut tincidunt. Vestibulum ut finibus orci. Vivamus in nibh ac velit interdum tempor in et lectus. Suspendisse quis hendrerit dui, et consectetur quam. Pellentesque at augue augue. Sed et feugiat urna, a molestie tellus. Nunc at nulla eget elit iaculis lobortis at quis arcu. Suspendisse potenti. Vestibulum in urna erat.
+  </p>
+</div>
+
+<div class="view" id=panelSetting *ngIf="checkView('settings')">
+  <app-pv-textfield
+    label="Time"
+    validate="integer"
+    maxlenth=2
+    [value]=settings.time
+    (valueChange)="setProperty('time',$event)">
+  </app-pv-textfield>
+  <app-pv-textfield
+    label="Warning Color"
+    [value]=settings.warningColor
+    (valueChange)="setProperty('warningColor',$event)">
+  </app-pv-textfield>
+  <app-pv-textfield
+    label="Alert Color"
+    [value]=settings.alertColor
+    (valueChange)="setProperty('alertColor',$event)">
+  </app-pv-textfield>
+  <app-pv-textfield
+    label="Start Color"
+    [value]=settings.infoColor
+    (valueChange)="setProperty('infoColor',$event)">
+  </app-pv-textfield>
+</div>
+
+<footer>
+  <button (click)="setView('about')" *ngIf=!view>
+    <i class="material-icons">info</i>
+  </button>
+</footer>

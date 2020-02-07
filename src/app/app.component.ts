@@ -6,5 +6,41 @@ import { Component } from '@angular/core';
   styleUrls: ['./app.component.css']
 })
 export class AppComponent {
-  title = 'svg-counter';
+
+  private settings: any;
+  private view: string;
+  private label: string;
+
+  title = 'svg-timer';
+
+  ngOnInit() {
+    this.settings = {
+      labels: {
+        settings: "Settings",
+        about: "About"
+      },
+      infoColor: "green",
+      warningColor: "orange",
+      alertColor: "red",
+      time: 40
+    };
+  }
+
+  setView(view) {
+    this.view = view;
+    this.label = this.settings.labels[view];
+  }
+
+  unsetView() {
+    this.view = null;
+    this.label = null;
+  }
+
+  checkView(name) {
+    return (this.view === name ? true : false);
+  }
+
+  setProperty(param,value) {
+    this.settings[param] = value;
+  }
 }

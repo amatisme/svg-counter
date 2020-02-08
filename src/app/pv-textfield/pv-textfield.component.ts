@@ -7,7 +7,6 @@ import { Component, Input, EventEmitter, Output, OnInit } from '@angular/core';
 })
 export class PvTextfieldComponent implements OnInit {
 
-  private maxlength: number;
   private placeholder: string;
   private pattern: RegExp;
 
@@ -22,7 +21,6 @@ export class PvTextfieldComponent implements OnInit {
   constructor() { }
 
   ngOnInit() {
-    if(this.value) this.object = this.value;
     switch(this.validate) {
       case 'email':
         this.maxlength = 55;

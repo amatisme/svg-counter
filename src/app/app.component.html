@@ -14,22 +14,22 @@
   </ul>
 </header>
 
-<div class="view" id=panelTimer>
+<section>
   <app-svg-timer
     [time]=settings.time
     [infoColor]=settings.infoColor
     [alertColor]=settings.alertColor
     [warningColor]=settings.warningColor>
   </app-svg-timer>
-</div>
+</section>
 
-<div class="view" id=panelAbout *ngIf="checkView('about')">
+<section *ngIf="checkView('about')">
   <p>
     Maecenas scelerisque ipsum eget sagittis volutpat. Pellentesque maximus tempus velit eget pulvinar. Vestibulum consequat posuere ligula quis varius. Cras suscipit tincidunt dui nec egestas. Morbi at aliquet nisl, non venenatis lacus. Phasellus auctor a tortor ut tincidunt. Vestibulum ut finibus orci. Vivamus in nibh ac velit interdum tempor in et lectus. Suspendisse quis hendrerit dui, et consectetur quam. Pellentesque at augue augue. Sed et feugiat urna, a molestie tellus. Nunc at nulla eget elit iaculis lobortis at quis arcu. Suspendisse potenti. Vestibulum in urna erat.
   </p>
-</div>
+</section>
 
-<div class="view" id=panelSetting *ngIf="checkView('settings')">
+<section *ngIf="checkView('settings')">
   <app-pv-textfield
     label="Time"
     validate="integer"
@@ -52,7 +52,7 @@
     [value]=settings.infoColor
     (valueChange)="setProperty('infoColor',$event)">
   </app-pv-textfield>
-</div>
+</section>
 
 <footer>
   <button (click)="setView('about')" *ngIf=!view>

@@ -1,4 +1,4 @@
-<div class="base-timer">
+<div class="base-timer" (click)=startTimer()>
   <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
     <g class="base-timer__circle">
       <circle cx="50" cy="50" r="45"></circle>
@@ -14,16 +14,8 @@
       </path>
     </g>
   </svg>
-  <label>
-    {{baseTimerLabel}}
-  </label>
-  <button (click)=startTimer() *ngIf="!active">
-    <i class="material-icons">play_circle_filled</i>
-  </button>
-  <button (click)=stopTimer() *ngIf="active">
-    <i class="material-icons">pause</i>
-  </button>
-  <button (click)=resetTimer() *ngIf="timePassed">
+  <label>{{baseTimerLabel}}</label>
+  <button (click)=resetTimer() *ngIf="timePassed > 0">
     <i class="material-icons">replay</i>
   </button>
 </div>

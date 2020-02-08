@@ -22,7 +22,7 @@ export class AppComponent {
       infoColor: "green",
       warningColor: "orange",
       alertColor: "red",
-      time: 40
+      time: 10
     };
   }
 
